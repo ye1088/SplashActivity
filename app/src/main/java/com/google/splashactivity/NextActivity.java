@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.google.Utils2;
+import com.google.utils.Utils2;
 
 /**
  * Created by admin on 2017/8/10.

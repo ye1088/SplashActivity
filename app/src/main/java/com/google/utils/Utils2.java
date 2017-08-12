@@ -1,4 +1,4 @@
-package com.google;
+package com.google.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -96,31 +96,42 @@ public class Utils2 {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setTitle("请选择要启动的MC版本");
-//        builder.setItems(mc_version, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                switch (which){
-//                    case 0:
-//                        Toast.makeText(context, "畅玩修改版", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    case 1:
-//                        if (isInstalled(context,LASTEST_MC_PACKAGE)){
-//                            startup_someApk(context,LASTEST_MC_PACKAGE);
-//                        }else {
-//                            Toast.makeText(context, "您还为安装最新版本的我的世界,开始为您下载~~", Toast.LENGTH_SHORT).show();
-//                            proDialog = new ProgressDialog(context);
-//
-//                            downloadAndInstall((Activity) context,DOWNLOAD_PATH);
-//                        }
-////                        Toast.makeText(context, "无修改最新版", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    default:
-//                        Toast.makeText(context, "默认版本", Toast.LENGTH_SHORT).show();
-//                        break;
-//                }
-//            }
-//        });
+        builder.setItems(mc_version, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case 0:
+                        Toast.makeText(context, "畅玩修改版", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1:
+                        if (isInstalled(context,LASTEST_MC_PACKAGE)){
+                            startup_someApk(context,LASTEST_MC_PACKAGE);
+                        }else {
+                            Toast.makeText(context, "您还为安装最新版本的我的世界,开始为您下载~~", Toast.LENGTH_SHORT).show();
+                            proDialog = new ProgressDialog(context);
+
+                            downloadAndInstall((Activity) context,DOWNLOAD_PATH);
+                        }
+//                        Toast.makeText(context, "无修改最新版", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(context, "默认版本", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
         builder.create().show();
+    }
+
+    public static void selectLastestVersion(Context context){
+            if (isInstalled(context,LASTEST_MC_PACKAGE)){
+                startup_someApk(context,LASTEST_MC_PACKAGE);
+            }else {
+                Toast.makeText(context, "您还未安装最新版本的我的世界,开始为您下载~~", Toast.LENGTH_SHORT).show();
+                proDialog = new ProgressDialog(context);
+
+                downloadAndInstall((Activity) context,DOWNLOAD_PATH);
+            }
     }
 
     public static void startup_someApk(Context context,String packageName){

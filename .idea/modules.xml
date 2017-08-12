@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SplashActivity.iml" filepath="$PROJECT_DIR$/SplashActivity.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/simple_xiaomi_ads.iml" filepath="$PROJECT_DIR$/simple_xiaomi_ads.iml" />
     </modules>
   </component>
 </project>
