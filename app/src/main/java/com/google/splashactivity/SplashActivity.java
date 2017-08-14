@@ -13,6 +13,8 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        Toast.makeText(this, "Splash activity showed ~~", Toast.LENGTH_SHORT).show();
+
+
         AdUtils.init(this);
         AdUtils.showSplash(this);
     }

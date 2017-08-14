@@ -15,6 +15,8 @@ import android.os.Message;
 import android.widget.Toast;
 
 
+import com.google.splashactivity.AdUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,7 +34,9 @@ public class Utils2 {
 
     public static int enter_count = 0;
     private static final String LASTEST_MC_PACKAGE = "com.mojang.minecraftpe.elm";
+    private static final String OLD_MC_PACKAGE = "com.mojang.minecraftpe";
     private static final String DOWNLOAD_PATH = "/sdcard/11.apk";
+    private static final String MC_VERSION = "871000400";
     static Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -60,6 +64,7 @@ public class Utils2 {
                     break;
         }
     }};
+    private static int BUFF_SIZE = 5*1024*1024;
 
 
     public static void onCreate(Activity context) {
@@ -91,36 +96,80 @@ public class Utils2 {
 
     static ProgressDialog proDialog = null;
 
+    public static void showDialog(Context context,String title,String msg,String okBtnTxt,String cancelBtnTxt,)
+
     public static void selectVersion(final Context context){
         String[] mc_version = {"畅玩修改版","无修改最新版"};
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setTitle("请选择要启动的MC版本");
-//        builder.setItems(mc_version, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                switch (which){
-//                    case 0:
-//                        Toast.makeText(context, "畅玩修改版", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    case 1:
-//                        if (isInstalled(context,LASTEST_MC_PACKAGE)){
-//                            startup_someApk(context,LASTEST_MC_PACKAGE);
-//                        }else {
-//                            Toast.makeText(context, "您还为安装最新版本的我的世界,开始为您下载~~", Toast.LENGTH_SHORT).show();
-//                            proDialog = new ProgressDialog(context);
-//
-//                            downloadAndInstall((Activity) context,DOWNLOAD_PATH);
-//                        }
-////                        Toast.makeText(context, "无修改最新版", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    default:
-//                        Toast.makeText(context, "默认版本", Toast.LENGTH_SHORT).show();
-//                        break;
-//                }
-//            }
-//        });
+        builder.setItems(mc_version, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case 0:
+                        if (getVersionCode(context).equals(MC_VERSION)){
+                            AdUtils.gotoNextActivity(context);
+                        }else {
+                            if (getVersionCode(context).equals("-1")){
+                                Toast.makeText(context, "您没有安装我的世界,现在为您安装~~", Toast.LENGTH_SHORT).show();
+                            }else {
+
+                            }
+
+                        }
+                        break;
+                    case 1:
+                        if (isInstalled(context,LASTEST_MC_PACKAGE)){
+                            startup_someApk(context,LASTEST_MC_PACKAGE);
+                        }else {
+                            Toast.makeText(context, "您还为安装最新版本的我的世界,开始为您下载~~", Toast.LENGTH_SHORT).show();
+                            proDialog = new ProgressDialog(context);
+
+                            downloadAndInstall((Activity) context,DOWNLOAD_PATH);
+                        }
+//                        Toast.makeText(context, "无修改最新版", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(context, "默认版本", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
         builder.create().show();
+    }
+
+
+
+    public static void copyFile2where(InputStream inputStream, String destFile) throws Exception {
+
+        FileOutputStream out = new FileOutputStream(destFile);
+        byte buffer[] = new byte[BUFF_SIZE];
+        int realLength;
+        long currentTime = 0;
+        long oldTime = System.currentTimeMillis();
+        while ((realLength = inputStream.read(buffer)) > 0) {
+            currentTime = System.currentTimeMillis();
+            if ((currentTime-oldTime)>500){
+                oldTime=currentTime;
+                mHandler.sendEmptyMessage(1);
+            }
+            out.write(buffer, 0, realLength);
+            out.flush();
+        }
+//        inputStream.close();
+        out.close();
+    }
+
+
+    // 获取应用版本名字
+    public static String getVersionCode(Context context)  {
+        try {
+            return String.valueOf(context.getPackageManager().
+                    getPackageInfo(OLD_MC_PACKAGE, PackageManager.GET_META_DATA).versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            return "-1";
+        }
     }
 
     public static void startup_someApk(Context context,String packageName){

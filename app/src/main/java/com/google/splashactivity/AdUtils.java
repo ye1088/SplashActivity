@@ -22,6 +22,7 @@ import com.xiaomi.ad.adView.SplashAd;
 import com.xiaomi.ad.common.pojo.AdError;
 import com.xiaomi.ad.common.pojo.AdEvent;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -38,7 +39,10 @@ public class AdUtils {
     private static final String POSITION_ID = "ed65ad4028db0d794303aa35a08c9554";
     private static String BANNER_ID = "9fa525d19113801c60e86d0660f0033a";
     private static final String TAG = "AD_LOG";
+    private static final String APP_VERSION = "BLOCKMC";
+    private static final String SAVE_PATH = "/sdcard/games";
     static AdListener adListener;
+
     private static boolean isBannerShowed = false;
     private static BannerAd h5BannerAd;
     private static boolean canShowBanner = false;
@@ -46,7 +50,17 @@ public class AdUtils {
 
 
     static Handler mHandler = new Handler();
+
+    public static void copy_apk(Context context){
+        File file = new File(SAVE_PATH);
+        if (!file.exists()){
+            file.mkdir();
+        }
+    }
     public static void init(Context context){
+        if (APP_VERSION.equals("BLOCKMC")){
+
+        }
         AdSdk.initialize(context, APPID);
         adListener = new AdListener() {
             @Override
@@ -267,23 +281,23 @@ public class AdUtils {
 
             @Override
             public void onAdClick() {
-                gotoNextActivity(context);
+                //gotoNextActivity(context);
             }
 
             @Override
             public void onAdDismissed() {
-                gotoNextActivity(context);
+                //gotoNextActivity(context);
             }
 
             @Override
             public void onAdFailed(String s) {
-                gotoNextActivity(context);
+                //gotoNextActivity(context);
             }
         });
         splashAd.requestAd(POSITION_ID_SPLASH);
     }
 
-    private static void gotoNextActivity(Context context) {
+    public static void gotoNextActivity(Context context) {
 
         Intent intent = new Intent(context, NextActivity.class);
         context.startActivity(intent);
