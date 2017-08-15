@@ -8,10 +8,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
 import android.widget.Toast;
 
 
@@ -37,6 +39,9 @@ public class Utils2 {
     private static final String OLD_MC_PACKAGE = "com.mojang.minecraftpe";
     private static final String DOWNLOAD_PATH = "/sdcard/11.apk";
     private static final String MC_VERSION = "871000400";
+    private static final String ASSETS_FILE_NAME = "mcdata";
+    private static final String OLD_MC_PATH = "/sdcard/games/old_mc.apk";
+
     static Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -96,7 +101,25 @@ public class Utils2 {
 
     static ProgressDialog proDialog = null;
 
-    public static void showDialog(Context context,String title,String msg,String okBtnTxt,String cancelBtnTxt,)
+    public static void showDialog(Context context, String title, String msg, String okBtnTxt,
+                                  String cancelBtnTxt, DialogInterface.OnClickListener listener){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setTitle(title);
+        builder.setMessage(msg);
+        builder.setNegativeButton(cancelBtnTxt,null);
+        builder.setPositiveButton(okBtnTxt, listener);
+        builder.create().show();
+    }
+
+    //卸载应用程序
+    public static void unstallApp(Context context, String packageName){
+        Intent uninstall_intent = new Intent();
+        uninstall_intent.setAction(Intent.ACTION_DELETE);
+        uninstall_intent.setData(Uri.parse("package:"+packageName));
+        context.startActivity(uninstall_intent);
+    }
+
 
     public static void selectVersion(final Context context){
         String[] mc_version = {"畅玩修改版","无修改最新版"};
@@ -112,9 +135,21 @@ public class Utils2 {
                             AdUtils.gotoNextActivity(context);
                         }else {
                             if (getVersionCode(context).equals("-1")){
-                                Toast.makeText(context, "您没有安装我的世界,现在为您安装~~", Toast.LENGTH_SHORT).show();
-                            }else {
+                                Toast.makeText(context, "您没有安装我的世界,现在为您安装~~",
+                                        Toast.LENGTH_SHORT).show();
+                                if (!isExistFile(OLD_MC_PATH)){
+                                    copyAssetsFile(context,ASSETS_FILE_NAME);
+                                }
+                                installFile((Activity) context,OLD_MC_PATH);
 
+                            }else {
+                                showDialog(context, "警告", "该工具只支持v1.04.0版本的我的世界，您要卸载旧版的我的世界么？",
+                                        "卸载", "再想想", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                unstallApp(context,OLD_MC_PACKAGE);
+                                            }
+                                        });
                             }
 
                         }
@@ -137,6 +172,18 @@ public class Utils2 {
             }
         });
         builder.create().show();
+    }
+
+    public static void copyAssetsFile(Context context,String fileName){
+        try {
+            InputStream is = context.getAssets().open(fileName);
+            copyFile2where(is,OLD_MC_PATH);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -199,6 +246,11 @@ public class Utils2 {
             }
         }
         return false;
+    }
+
+
+    public static boolean isExistFile(String filePath){
+        return new File(filePath).exists();
     }
 
 
