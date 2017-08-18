@@ -18,4 +18,9 @@ public class SplashActivity extends Activity {
         AdUtils.init(this);
         AdUtils.showSplash(this);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 }

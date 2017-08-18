@@ -38,7 +38,7 @@ public class Utils2 {
     private static final String LASTEST_MC_PACKAGE = "com.mojang.minecraftpe.elm";
     private static final String OLD_MC_PACKAGE = "com.mojang.minecraftpe";
     private static final String DOWNLOAD_PATH = "/sdcard/11.apk";
-    private static final String MC_VERSION = "871000400";
+    private static final String MC_VERSION = "760140009";
     private static final String ASSETS_FILE_NAME = "mcdata";
     private static final String OLD_MC_PATH = "/sdcard/games/old_mc.apk";
 
