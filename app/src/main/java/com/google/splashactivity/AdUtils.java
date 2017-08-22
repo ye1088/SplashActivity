@@ -281,17 +281,17 @@ public class AdUtils {
 
             @Override
             public void onAdClick() {
-                //gotoNextActivity(context);
+//                gotoNextActivity(context);
             }
 
             @Override
             public void onAdDismissed() {
-                //gotoNextActivity(context);
+                gotoNextActivity(context);
             }
 
             @Override
             public void onAdFailed(String s) {
-                //gotoNextActivity(context);
+                gotoNextActivity(context);
             }
         });
         splashAd.requestAd(POSITION_ID_SPLASH);

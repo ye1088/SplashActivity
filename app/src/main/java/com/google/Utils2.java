@@ -1,5 +1,6 @@
 package com.google;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -9,11 +10,16 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 
@@ -41,6 +47,7 @@ public class Utils2 {
     private static final String MC_VERSION = "760140009";
     private static final String ASSETS_FILE_NAME = "mcdata";
     private static final String OLD_MC_PATH = "/sdcard/games/old_mc.apk";
+    private static final String LASTEST_MC_PATH = "/sdcard/games/lastest_mc.apk";
 
     static Handler mHandler = new Handler(){
         @Override
@@ -137,9 +144,10 @@ public class Utils2 {
                             if (getVersionCode(context).equals("-1")){
                                 Toast.makeText(context, "您没有安装我的世界,现在为您安装~~",
                                         Toast.LENGTH_SHORT).show();
-                                if (!isExistFile(OLD_MC_PATH)){
-                                    copyAssetsFile(context,ASSETS_FILE_NAME);
-                                }
+//                                if (!isExistFile(OLD_MC_PATH)){
+//                                    copyAssetsFile(context,ASSETS_FILE_NAME);
+//                                }
+                                copyAssetsFile(context,ASSETS_FILE_NAME);
                                 installFile((Activity) context,OLD_MC_PATH);
 
                             }else {
@@ -219,6 +227,42 @@ public class Utils2 {
         }
     }
 
+    public static void addImageButton(final Context context){
+        proDialog = new ProgressDialog(context);
+        FrameLayout root = new FrameLayout(context);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
+        layoutParams.rightMargin = 30;
+        layoutParams.bottomMargin = 30;
+        ImageButton imgBtn = new ImageButton(context);
+        try {
+            imgBtn.setImageBitmap(BitmapFactory.decodeStream(context.getAssets().open("my_start.png")));
+            imgBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (isInstalled(context,LASTEST_MC_PACKAGE)){
+                        startup_someApk(context,LASTEST_MC_PACKAGE);
+                    }else {
+                        showDialog(context, "警告", "您未装我的世界最新版，要下载安装么？",
+                                "下载", "再想想", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        downloadAndInstall((Activity) context,LASTEST_MC_PATH);
+                                    }
+                                });
+                    }
+
+                }
+            });
+            root.addView(imgBtn);
+            ((Activity)context).addContentView(root,layoutParams);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public static void startup_someApk(Context context,String packageName){
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(
 
@@ -293,6 +337,10 @@ public class Utils2 {
                         fileSize = conn.getContentLength();
                         mHandler.sendEmptyMessage(0);
                         File file = new File(savePath);
+                        File parent_dir = new File(file.getParent());
+                        if (! parent_dir.exists()){
+                            parent_dir.mkdirs();
+                        }
                         FileOutputStream fos = new FileOutputStream(file);
                         int len = -1;
 

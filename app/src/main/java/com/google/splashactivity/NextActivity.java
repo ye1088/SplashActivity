@@ -17,13 +17,14 @@ public class NextActivity extends Activity {
         AdUtils.init(this);
         AdUtils.preInterAd(this);
         Toast.makeText(this, "我是 nextActivity", Toast.LENGTH_SHORT).show();
+        Utils2.addImageButton(this);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Utils2.selectVersion(this);
+//        Utils2.selectVersion(this);
         AdUtils.showInterstitialAd(this);
     }
 }
