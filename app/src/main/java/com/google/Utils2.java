@@ -12,14 +12,19 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PixelFormat;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 
@@ -227,17 +232,39 @@ public class Utils2 {
         }
     }
 
+    /**
+     * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
+     */
+    public static int dip2px(Activity mActivity, float dpValue) {
+        final float scale = mActivity.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    static ImageView imgBtn = null;
     public static void addImageButton(final Context context){
         proDialog = new ProgressDialog(context);
-        FrameLayout root = new FrameLayout(context);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT);
+        WindowManager root = (WindowManager) context
+                .getSystemService(context.WINDOW_SERVICE);
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
-        layoutParams.rightMargin = 30;
-        layoutParams.bottomMargin = 30;
-        ImageButton imgBtn = new ImageButton(context);
+//        layoutParams.rightMargin = 30;
+//        layoutParams.bottomMargin = 30;
+        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+        layoutParams.format = PixelFormat.RGBA_8888;
+        layoutParams.height = dip2px((Activity) context,80);
+        layoutParams.width = dip2px((Activity) context,80);
+
+        imgBtn = new ImageView(context);
+//        FrameLayout.LayoutParams imgBtnParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+//                FrameLayout.LayoutParams.WRAP_CONTENT);
+//        imgBtnParams.height = dip2px((Activity) context,80);
+//        imgBtnParams.width = dip2px((Activity) context,80);
+        imgBtn.setBackgroundColor(0x00000000);
         try {
-            imgBtn.setImageBitmap(BitmapFactory.decodeStream(context.getAssets().open("my_start.png")));
+            Bitmap bitmap = BitmapFactory.decodeStream(context.getAssets().open("my_start.png"));
+
+            imgBtn.setImageBitmap(bitmap);
             imgBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -249,18 +276,31 @@ public class Utils2 {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         downloadAndInstall((Activity) context,LASTEST_MC_PATH);
+
                                     }
                                 });
                     }
 
                 }
             });
-            root.addView(imgBtn);
-            ((Activity)context).addContentView(root,layoutParams);
+            root.addView(imgBtn,layoutParams);
+//            ((Activity)context).addContentView(root,layoutParams);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+
+
+    public static void show_imgButton(){
+        imgBtn.setVisibility(ImageView.VISIBLE);
+    }
+
+
+
+    public static void hide_imgButton(){
+        imgBtn.setVisibility(ImageView.GONE);
     }
 
     public static void startup_someApk(Context context,String packageName){
